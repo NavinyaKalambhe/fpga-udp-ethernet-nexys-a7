@@ -1,0 +1,13 @@
+vivado_project/
+*.jou
+*.log
+*.str
+.Xil/
+*.cache/
+*.hw/
+*.runs/
+*.sim/
+*.xpr
+build/
+frame.txt
+*.vcd

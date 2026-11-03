@@ -1,0 +1,60 @@
+## Nexys A7 constraints - UDP/Ethernet node. Check every pin against Digilent's master XDC for your board revision.
+set_property -dict { PACKAGE_PIN E3  IOSTANDARD LVCMOS33 } [get_ports CLK100MHZ]
+create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports CLK100MHZ]
+# 50 MHz (RMII + stack) and 25 MHz (VGA) clocks made by the divider in top.v
+create_generated_clock -name clk50 -source [get_ports CLK100MHZ] -divide_by 2 [get_pins {div_reg[0]/Q}]
+create_generated_clock -name clk25 -source [get_ports CLK100MHZ] -divide_by 4 [get_pins {div_reg[1]/Q}]
+
+set_property -dict { PACKAGE_PIN C12 IOSTANDARD LVCMOS33 } [get_ports CPU_RESETN]
+
+set_property -dict { PACKAGE_PIN H17  IOSTANDARD LVCMOS33 } [get_ports {LED[0]}]
+set_property -dict { PACKAGE_PIN K15  IOSTANDARD LVCMOS33 } [get_ports {LED[1]}]
+set_property -dict { PACKAGE_PIN J13  IOSTANDARD LVCMOS33 } [get_ports {LED[2]}]
+set_property -dict { PACKAGE_PIN N14  IOSTANDARD LVCMOS33 } [get_ports {LED[3]}]
+set_property -dict { PACKAGE_PIN R18  IOSTANDARD LVCMOS33 } [get_ports {LED[4]}]
+set_property -dict { PACKAGE_PIN V17  IOSTANDARD LVCMOS33 } [get_ports {LED[5]}]
+set_property -dict { PACKAGE_PIN U17  IOSTANDARD LVCMOS33 } [get_ports {LED[6]}]
+set_property -dict { PACKAGE_PIN U16  IOSTANDARD LVCMOS33 } [get_ports {LED[7]}]
+set_property -dict { PACKAGE_PIN V16  IOSTANDARD LVCMOS33 } [get_ports {LED[8]}]
+set_property -dict { PACKAGE_PIN T15  IOSTANDARD LVCMOS33 } [get_ports {LED[9]}]
+set_property -dict { PACKAGE_PIN U14  IOSTANDARD LVCMOS33 } [get_ports {LED[10]}]
+set_property -dict { PACKAGE_PIN T16  IOSTANDARD LVCMOS33 } [get_ports {LED[11]}]
+set_property -dict { PACKAGE_PIN V15  IOSTANDARD LVCMOS33 } [get_ports {LED[12]}]
+set_property -dict { PACKAGE_PIN V14  IOSTANDARD LVCMOS33 } [get_ports {LED[13]}]
+set_property -dict { PACKAGE_PIN V12  IOSTANDARD LVCMOS33 } [get_ports {LED[14]}]
+set_property -dict { PACKAGE_PIN V11  IOSTANDARD LVCMOS33 } [get_ports {LED[15]}]
+
+## VGA
+set_property -dict { PACKAGE_PIN A3   IOSTANDARD LVCMOS33 } [get_ports {VGA_R[0]}]
+set_property -dict { PACKAGE_PIN B4   IOSTANDARD LVCMOS33 } [get_ports {VGA_R[1]}]
+set_property -dict { PACKAGE_PIN C5   IOSTANDARD LVCMOS33 } [get_ports {VGA_R[2]}]
+set_property -dict { PACKAGE_PIN A4   IOSTANDARD LVCMOS33 } [get_ports {VGA_R[3]}]
+set_property -dict { PACKAGE_PIN C6   IOSTANDARD LVCMOS33 } [get_ports {VGA_G[0]}]
+set_property -dict { PACKAGE_PIN A5   IOSTANDARD LVCMOS33 } [get_ports {VGA_G[1]}]
+set_property -dict { PACKAGE_PIN B6   IOSTANDARD LVCMOS33 } [get_ports {VGA_G[2]}]
+set_property -dict { PACKAGE_PIN A6   IOSTANDARD LVCMOS33 } [get_ports {VGA_G[3]}]
+set_property -dict { PACKAGE_PIN B7   IOSTANDARD LVCMOS33 } [get_ports {VGA_B[0]}]
+set_property -dict { PACKAGE_PIN C7   IOSTANDARD LVCMOS33 } [get_ports {VGA_B[1]}]
+set_property -dict { PACKAGE_PIN D7   IOSTANDARD LVCMOS33 } [get_ports {VGA_B[2]}]
+set_property -dict { PACKAGE_PIN D8   IOSTANDARD LVCMOS33 } [get_ports {VGA_B[3]}]
+set_property -dict { PACKAGE_PIN B11 IOSTANDARD LVCMOS33 } [get_ports VGA_HS]
+set_property -dict { PACKAGE_PIN B12 IOSTANDARD LVCMOS33 } [get_ports VGA_VS]
+
+## Ethernet PHY (LAN8720A, RMII)
+set_property -dict { PACKAGE_PIN C9   IOSTANDARD LVCMOS33 } [get_ports ETH_MDC]
+set_property -dict { PACKAGE_PIN A9   IOSTANDARD LVCMOS33 } [get_ports ETH_MDIO]
+set_property -dict { PACKAGE_PIN B3   IOSTANDARD LVCMOS33 } [get_ports ETH_RSTN]
+set_property -dict { PACKAGE_PIN D9   IOSTANDARD LVCMOS33 } [get_ports ETH_CRSDV]
+set_property -dict { PACKAGE_PIN B9   IOSTANDARD LVCMOS33 } [get_ports ETH_TXEN]
+set_property -dict { PACKAGE_PIN D5   IOSTANDARD LVCMOS33 } [get_ports ETH_REFCLK]
+set_property -dict { PACKAGE_PIN C11  IOSTANDARD LVCMOS33 } [get_ports {ETH_RXD[0]}]
+set_property -dict { PACKAGE_PIN D10  IOSTANDARD LVCMOS33 } [get_ports {ETH_RXD[1]}]
+set_property -dict { PACKAGE_PIN A10  IOSTANDARD LVCMOS33 } [get_ports {ETH_TXD[0]}]
+set_property -dict { PACKAGE_PIN A8   IOSTANDARD LVCMOS33 } [get_ports {ETH_TXD[1]}]
+
+## RMII timing: the PHY samples/drives its pins relative to the 50 MHz clock WE supply on ETH_REFCLK.
+## Values below are approximate LAN8720A figures: CHECK THEM against the datasheet before trusting timing results.
+set_input_delay  -clock [get_clocks clk50] -max 13.0 [get_ports {ETH_CRSDV ETH_RXD[*]}]
+set_input_delay  -clock [get_clocks clk50] -min  3.0 [get_ports {ETH_CRSDV ETH_RXD[*]}]
+set_output_delay -clock [get_clocks clk50] -max  4.0 [get_ports {ETH_TXEN ETH_TXD[*]}]
+set_output_delay -clock [get_clocks clk50] -min -1.5 [get_ports {ETH_TXEN ETH_TXD[*]}]
