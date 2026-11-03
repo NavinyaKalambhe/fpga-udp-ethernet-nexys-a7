@@ -7,6 +7,12 @@ frame and any text you send it on a **VGA** dashboard. No CPU and no soft core: 
 ![dashboard](docs/vga_dashboard_sim.png)
 *Simulated VGA output after the testbench traffic.*
 
+## Demo video
+
+[![Watch the demo on YouTube](https://img.youtube.com/vi/SrmkjPqJhWU/maxresdefault.jpg)](https://www.youtube.com/watch?v=SrmkjPqJhWU)
+
+*ARP, ping, UDP text and UDP echo running on the Nexys A7.*
+
 ## What it does
 | Feature | Details |
 |---|---|
